@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package excel;
+
+option go_package = "/excels";
+
+message Tax {
+  bool IsPstValid = 1;
+  bool IsQstValid = 2;
+  string PstNumber = 3;
+  string QstNumber = 4;
+  string Enterprise = 5;
+  string Date = 6;
+}
+
+
+message TaxRequest {
+  Tax taxEntry = 1;
+}
+
+message TaxResponse {
+  bytes result = 1;
+}
+
+service ExcelService {
+  rpc Upload(TaxRequest) returns (TaxResponse);
+}
+
