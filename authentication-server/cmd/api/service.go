@@ -18,11 +18,13 @@ func (app *Config) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Panic(err)
 	}
+
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(err)
+	err = json.NewEncoder(w).Encode(GenerateJWTToken(user))
 	if err != nil {
 		return
 	}
+
 }
 
 func (app *Config) Registration(w http.ResponseWriter, r *http.Request) {
@@ -66,4 +68,12 @@ func (app *Config) Delete(w http.ResponseWriter, r *http.Request) {
 	err = data.DeleteUser(user)
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode("user deleted")
+}
+
+func (app *Config) Refresh(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (app *Config) Token(w http.ResponseWriter, r *http.Request) {
+
 }

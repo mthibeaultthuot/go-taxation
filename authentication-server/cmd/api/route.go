@@ -4,13 +4,14 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/jwtauth/v5"
 	"net/http"
 )
 
 func (app *Config) route() http.Handler {
-	mux := chi.NewRouter()
+	r := chi.NewRouter()
 
-	mux.Use(cors.Handler(cors.Options{
+	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
@@ -19,10 +20,20 @@ func (app *Config) route() http.Handler {
 		MaxAge:           300,
 	}))
 
-	mux.Use(middleware.Heartbeat("/ping"))
-	mux.Post("/api/v1/login", app.Login)
-	mux.Post("/api/v1/registration", app.Registration)
-	mux.Post("/api/v1/delete", app.Delete)
+	// Protected routes
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator)
 
-	return mux
+	})
+	// Public route
+	r.Use(middleware.Heartbeat("/ping"))
+	r.Post("/v1/auth/login", app.Login)
+	r.Post("/v1/auth/registration", app.Registration)
+	r.Post("/v1/auth/delete", app.Delete)
+	r.Get("/v1/auth/refresh/token", app.Refresh)
+	r.Get("/v1/auth/token", app.Token)
+	// TODO : séparer l'api privér et public
+
+	return r
 }
