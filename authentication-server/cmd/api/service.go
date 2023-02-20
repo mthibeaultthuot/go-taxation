@@ -41,8 +41,9 @@ func (app *Config) Registration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user := data.User{
-		Username: username,
-		Password: hashPassword,
+		Username:   username,
+		Password:   hashPassword,
+		Permission: 1,
 	}
 	err = data.InsertUser(user)
 	if err != nil {

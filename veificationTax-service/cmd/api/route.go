@@ -20,7 +20,7 @@ func (app *Config) route() http.Handler {
 	}))
 
 	mux.Use(middleware.Heartbeat("/ping"))
-	mux.Post("/", app.Tax)
+	mux.Post("/service/taxation/verify", app.Tax)
 
 	return mux
 }

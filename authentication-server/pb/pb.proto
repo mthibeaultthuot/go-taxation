@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "/pb";
+
+message JwtRequest {
+  string token = 1;
+}
+
+message JwtResponse {
+  bool isValid = 1;
+  string authorization = 2;
+}
+
+service JwtService {
+  rpc CheckToken(JwtRequest) returns (JwtResponse);
+}
+
+
+
