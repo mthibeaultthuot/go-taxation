@@ -4,13 +4,21 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/D3xt3rrrr/verificationTax-service/data"
-	"github.com/D3xt3rrrr/verificationTax-service/excels"
+	"github.com/D3xt3rrrr/verificationTax-service/pb"
+	_ "google.golang.org/genproto/googleapis/container/v1beta1"
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
 )
 
 func (app *Config) Tax(r http.ResponseWriter, w *http.Request) {
+	bearerToken := w.Header.Get("Authorization")
+	user := AuthGrpc(bearerToken)
+	if !user.IsJwtValid {
+		http.Redirect(r, w, "http://localhost:8080", 403)
+		return
+	}
+
 	var body data.TaxBody
 
 	err := json.NewDecoder(w.Body).Decode(&body)
@@ -55,6 +63,7 @@ func (app *Config) Tax(r http.ResponseWriter, w *http.Request) {
 	//xlsx.wri
 }
 
+/*
 func connectGrpc(tax *data.Tax) []byte {
 	excelTax := &excels.Tax{
 		IsPstValid: tax.IsPstValid,
@@ -84,5 +93,29 @@ func connectGrpc(tax *data.Tax) []byte {
 	}
 
 	return resp.GetResult()
+
+}*/
+
+func AuthGrpc(bearerToken string) data.User {
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9009", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+
+	defer conn.Close()
+
+	c := pb.NewJwtTokenServiceClient(conn)
+
+	resp, err := c.CheckToken(context.Background(), &pb.JwtRequest{Token: bearerToken})
+	if err != nil {
+		panic(err)
+	}
+
+	return data.User{
+		Username:        "",
+		IsJwtValid:      resp.IsJwtValid,
+		PermissionLevel: resp.Permission,
+	}
 
 }

@@ -1,32 +1,50 @@
 package main
 
 import (
-	"fmt"
 	"github.com/D3xt3rrrr/go-cloud/authentication-server/data"
-	"github.com/go-chi/jwtauth/v5"
+	"github.com/golang-jwt/jwt/v5"
+	_ "github.com/golang-jwt/jwt/v5"
 	"log"
+	"strings"
+	"time"
 )
 
-var tokenAuth *jwtauth.JWTAuth
-var secret = "Adfsafd#W#Rasdfasf$"
+var secret = []byte("asdfadsfdasfadsfd")
 
-func GenerateJWTToken(user data.User) string {
-	tokenAuth := jwtauth.New("HS256", []byte(secret+user.Password), nil)
-	_, tokenString, _ := tokenAuth.Encode(map[string]interface{}{"user_id": user.Username})
-	fmt.Printf("DEBUG: a sample jwt is %s\n\n", tokenString)
-	return tokenString
+type JwtClaims struct {
+	Username string `json:"username"`
+	jwt.RegisteredClaims
 }
 
-func VerifyJwt(JwtToken string) {
-	_, err := jwtauth.VerifyToken(tokenAuth, JwtToken)
-	if err != nil {
-		log.Panic(err)
+func GenerateJwt(user data.User) string {
+	expiration := time.Now().Add(5 * time.Minute)
+	claims := &JwtClaims{
+		Username: user.Username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expiration),
+		},
 	}
+	// TODO : add security with jwt.SigningMethodECDSA
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	jwtToken, err := token.SignedString(secret)
+	if err != nil {
+		panic(err)
+	}
+	return jwtToken
 }
 
-func DecodeJwt(JwtToken string) {
-	_, err := tokenAuth.Decode(JwtToken)
+func VerifyJwt(JwtToken string) bool {
+	// TODO : add more security and verification
+	log.Println(JwtToken)
+	token, err := jwt.ParseWithClaims(JwtToken, &JwtClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return secret, nil
+	})
 	if err != nil {
-		log.Panic(err)
+		return false
 	}
+	return token.Valid
+}
+
+func getTokenFromBearer(bearerToken string) string {
+	return strings.Split(bearerToken, "Bearer ")[1]
 }

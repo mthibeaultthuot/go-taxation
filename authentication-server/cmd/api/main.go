@@ -23,17 +23,24 @@ func main() {
 		Handler: app.route(),
 	}
 
-	init, err := data.Init()
+	mongodb := data.MongoDb{
+		"MongoDb Tax",
+		"mongodb://localhost:27017",
+		"Tax",
+		"user",
+	}
+
+	init, err := data.Init(mongodb)
 	app.Client = init
 
 	if err != nil {
 		log.Panic(err)
 	}
 
+	go grpcListen()
+
 	err = server.ListenAndServe()
 	if err != nil {
 		log.Panic(err)
 	}
-
-	go grpcListen()
 }

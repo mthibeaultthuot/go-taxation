@@ -18,13 +18,8 @@ func (app *Config) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Panic(err)
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(GenerateJWTToken(user))
-	if err != nil {
-		return
-	}
-
+	bearer := "Bearer " + GenerateJwt(user)
+	w.Header().Set("Authorization", bearer)
 }
 
 func (app *Config) Registration(w http.ResponseWriter, r *http.Request) {

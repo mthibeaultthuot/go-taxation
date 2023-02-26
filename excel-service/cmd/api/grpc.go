@@ -40,9 +40,9 @@ func (e ExcelServer) Upload(ctx context.Context, req *excels.TaxRequest) (*excel
 }
 
 func grpcListen() {
-	lis, err := net.Listen("tcp", ":9000")
+	lis, err := net.Listen("tcp", ":9002")
 	if err != nil {
-		log.Fatal("Failed to listen to port :9000 %v", err)
+		log.Fatal("Failed to listen to port :9002 %v", err)
 	}
 
 	s := grpc.NewServer()

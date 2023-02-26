@@ -8,20 +8,23 @@ import (
 	"time"
 )
 
-type MongoDb interface {
-	Init() error
+type MongoDb struct {
+	LogName    string
+	Uri        string
+	Database   string
+	Collection string
 }
 
 var (
-	uri    = "mongodb://localhost:27017"
 	Client *mongo.Client
 )
 
-func Init() (*mongo.Client, error) {
+func Init(mongodb MongoDb) (*mongo.Client, error) {
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	newClient, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	newClient, err := mongo.Connect(ctx, options.Client().ApplyURI(mongodb.Uri))
 	Client = newClient
-	log.Println("Mongodb as started on ", uri)
+	log.Println("Mongodb as started on ", mongodb.Uri)
 	return newClient, err
 }
