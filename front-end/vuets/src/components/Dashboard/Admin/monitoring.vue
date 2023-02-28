@@ -49,7 +49,7 @@ export default defineComponent({
       let json = JSON.stringify(tax)
       this.request = json
 
-      axios.post('http://localhost:8081/', json)
+      axios.post('http://localhost:8081/service/taxation/verify', json)
           .then((response) => {
             this.response = response.data;
           })

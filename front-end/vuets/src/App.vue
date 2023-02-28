@@ -1,9 +1,40 @@
-<script setup lang="ts">
-import Monitoring from "./components/monitoring.vue";
+<script lang="ts">
+import Monitoring from "./components/Dashboard/Admin/monitoring.vue";
+import NotFound from "./components/NotFound.vue";
+import Login from "./components/Login.vue";
+import TaxVerification from "./components/Dashboard/Tax/TaxForm.vue";
+import {defineComponent} from "vue";
+import NavBar from "./components/NavBar.vue";
+import Dashboard from "./components/Dashboard/Dashboard.vue";
+
+const routes = <any>{
+  '/login': Login,
+  '/dashboard': Dashboard
+}
+
+export default defineComponent({
+  components: {NavBar, Login},
+  data() {
+    return {
+      currentPath: window.location.hash
+    }
+  },
+  computed: {
+    currentView() {
+      return routes[this.currentPath.slice(1) || '/'] || NotFound
+    }
+  },
+  mounted() {
+    window.addEventListener('hashchange', () => {
+      this.currentPath = window.location.hash
+    })
+  }
+})
 </script>
 
 <template>
-  <Monitoring />
+  <NavBar/>
+  <component :is="currentView" />
 </template>
 
 <style scoped>
