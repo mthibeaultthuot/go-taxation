@@ -27,16 +27,19 @@ func (app *Config) Tax(r http.ResponseWriter, w *http.Request) {
 	}
 
 	tax := &data.Tax{
-		false,
-		false,
-		body.Pst,
-		body.Qst,
-		"",
-		"",
+		Username:  user.Username,
+		PstNumber: body.Pst,
+		QstNumber: body.Qst,
 	}
 
 	qstVerification(tax)
 	pstVerification(tax)
+
+	log.Println("userna,e", user)
+	err = app.Repo.Insert(tax)
+	if err != nil {
+		return
+	}
 
 	//file, err := CreateExcelFile(*tax)
 	//if err != nil {
@@ -51,7 +54,10 @@ func (app *Config) Tax(r http.ResponseWriter, w *http.Request) {
 	//io.Copy(r, file)
 	//r.Write(&tax)
 	r.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(r).Encode(tax)
+	err = json.NewEncoder(r).Encode(tax)
+	if err != nil {
+		return
+	}
 
 	//connectGrpc(tax)
 	//io.Copy(r, connectGrpc(tax))
@@ -61,6 +67,24 @@ func (app *Config) Tax(r http.ResponseWriter, w *http.Request) {
 	//	return
 	//}
 	//xlsx.wri
+}
+
+func (app *Config) GetAllFromUser(r http.ResponseWriter, w *http.Request) {
+	bearerToken := w.Header.Get("Authorization")
+	user := AuthGrpc(bearerToken)
+	if !user.IsJwtValid {
+		http.Redirect(r, w, "http://localhost:8080", 403)
+		return
+	}
+	taxList := app.Repo.GetAllFromUser(user.Username)
+	err := json.NewEncoder(r).Encode(taxList)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (app *Config) GetAll(r http.ResponseWriter, w *http.Request) []data.Tax {
+	return nil
 }
 
 /*
@@ -113,7 +137,7 @@ func AuthGrpc(bearerToken string) data.User {
 	}
 
 	return data.User{
-		Username:        "",
+		Username:        resp.Username,
 		IsJwtValid:      resp.IsJwtValid,
 		PermissionLevel: resp.Permission,
 	}

@@ -1,11 +1,7 @@
 <template>
-  <div class="form">
-    <div class="left">
-      <h1>The simple way to verify tax number</h1>
-    </div>
-    <div class="right">
-      <h2 class="login_h2">Tax validation</h2>
-      <div class="divider"></div>
+  <div class="opacity-form"></div>
+  <div class="form-body">
+    <h2>Qst/Pst verification</h2>
       <form>
         <label>Pst</label>
         <input v-model="Pst" type="text">
@@ -15,7 +11,6 @@
         <input v-model="entreprise" type="text">
         <button @click="sendLogin" type="button">Check validity</button>
       </form>
-    </div>
   </div>
 </template>
 
@@ -50,103 +45,79 @@ export default defineComponent ({
       const bearer = {
         headers: { Authorization: localStorage.getItem("token") }
       };
-
-      console.log(json)
-
-
-
       axios.post('http://localhost:8081/service/taxation/verify', json, bearer)
           .then((response) => {
             console.log(response.data)
 
           })
           .catch(error => console.log(error))
+    },
+    opacity() {
+      const el = document.body;
+      el.classList.add("opacity-form")
     }
-  }
+  },
+
 })
 </script>
 
 <style scoped>
-
-
-.form {
+.opacity-form {
   position: absolute;
-  transform: translate(-50%, -50%);
-  left: 50%;
-  top: 50%;
-  width: 80%;
-  height: 80%;
-  background: #fff;
-  color: #535bf2;
-  background-size: cover;
-  border-radius: 10px;
-}
-
-.left {
-  position: absolute;
-  transform: translate(0, -50%);
-  left: 2%;
-  top: 50%;
-  width: 34%;
-  height: 95%;
-  color: white;
-  background: #646cff;
-  text-align: center;
-  border-radius: 10px;
-}
-
-.right {
-  position: absolute;
-  left: 35%;
+  height: 100vh;
+  width: 100vh;
+  opacity: 0.1;
   top: 0;
-  text-align: center;
-  width: 66%;
-  height: 100%;
+  left: 0;
+  background: #333333;
 }
-
-.login_h2 {
-  margin-top: 10%;
-  font-size: 45px;
-}
-
-.divider {
+.form-body {
   position: absolute;
   transform: translate(-50%, -50%);
-  top: 30%;
   left: 50%;
+  top: 25%;
+  width: 50%;
+  height: 100%;
+  border-radius: 10px;
+  background: #ffffff;
   text-align: center;
-  width: 80%;
-  height: 1px;
-  background: #888888;
 }
 
 form {
-  transform: translate(-50%, -50%);
   position: absolute;
+  transform: translate(-50%, -50%);
   left: 50%;
-  top: 68%;
-  width: 50%;
-  height: 50%;
-  margin: 10px;
+  top: 50%;
+  width: 80%;
 }
 
 input {
   display: block;
-  border: solid 1px #333333;
+  border: solid 1px #ABAFB9;
   background: transparent;
   margin-bottom: 50px;
   border-radius: 2px;
-  color: #111111;
+  color: #ABAFB9;
   width: 100%;
-  height: 6.5%;
+  height: 30px;
+  text-align: center;
+
 }
+
+
 
 button {
   background: #535bf2;
   border: none;
   border-radius: 2px;
-  width: 100%;
-  height: 6.5%;
+  width: 50%;
+  height: 30px;
+  color: white;
+}
+
+label, button {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-weight: bold;
 }
 
 </style>

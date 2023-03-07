@@ -20,6 +20,7 @@ func (app *Config) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	bearer := "Bearer " + GenerateJwt(user)
 	w.Header().Set("Authorization", bearer)
+	log.Println("authorization : ", w.Header().Get("Authorization"))
 	w.Header().Set("Access-Control-Expose-Headers", "Authorization")
 }
 

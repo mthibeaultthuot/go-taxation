@@ -21,6 +21,7 @@ func (app *Config) route() http.Handler {
 
 	mux.Use(middleware.Heartbeat("/ping"))
 	mux.Post("/service/taxation/verify", app.Tax)
+	mux.Get("/service/taxation/{username}", app.GetAllFromUser)
 
 	return mux
 }

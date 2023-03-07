@@ -9,8 +9,9 @@ message JwtRequest {
 }
 
 message JwtResponse {
-  bool isJwtValid = 1;
-  int32 permission = 2;
+  string username = 1;
+  bool isJwtValid = 2;
+  int32 permission = 3;
 }
 
 service JwtTokenService {

@@ -9,6 +9,7 @@ import (
 )
 
 type MongoDb struct {
+	Client     *mongo.Client
 	LogName    string
 	Uri        string
 	Database   string

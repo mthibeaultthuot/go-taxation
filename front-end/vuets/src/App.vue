@@ -33,11 +33,13 @@ export default defineComponent({
 </script>
 
 <template>
-  <NavBar/>
   <component :is="currentView" />
 </template>
 
 <style scoped>
+.form-opacity {
+  background: #333333;
+}
 .logo {
   height: 6em;
   padding: 1.5em;

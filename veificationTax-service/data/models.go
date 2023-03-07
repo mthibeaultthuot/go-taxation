@@ -1,6 +1,7 @@
 package data
 
 type Tax struct {
+	Username   string `bson:"username,omitempty"`
 	IsPstValid bool
 	IsQstValid bool
 	PstNumber  string

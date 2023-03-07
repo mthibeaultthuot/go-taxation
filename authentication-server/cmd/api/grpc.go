@@ -30,6 +30,6 @@ func grpcListen() {
 
 func (s GrpcServer) CheckToken(ctx context.Context, request *pb.JwtRequest) (*pb.JwtResponse, error) {
 	jwtToken := getTokenFromBearer(request.Token)
-	isValid := VerifyJwt(jwtToken)
-	return &pb.JwtResponse{Permission: 1, IsJwtValid: isValid}, nil
+	isValid, user := VerifyJwt(jwtToken)
+	return &pb.JwtResponse{Username: user.Username, Permission: int32(user.Permission), IsJwtValid: isValid}, nil
 }

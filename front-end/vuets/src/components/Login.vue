@@ -4,15 +4,32 @@
       <h1>The simple way to verify tax number</h1>
     </div>
     <div class="right">
-      <h2 class="login_h2">Login</h2>
-      <div class="divider"></div>
-      <form>
-        <label>Email</label>
-        <input v-model="email" type="text">
-        <label>Password</label>
-        <input v-model="password" type="password">
-        <button @click="sendLogin" type="button">Submit</button>
-      </form>
+      <div class="form-content">
+        <h1 class="login_h2">Hi, welcome back</h1>
+        <div class="divider"></div>
+        <form>
+          <label>Email Address</label>
+          <div class="email-input">
+            <font-awesome-icon class="icon" icon="fa-solid fa-at" />
+            <input v-model="email" placeholder="tax@tax.ca" type="text">
+          </div>
+          <label>Password</label>
+          <div class="password-input">
+            <font-awesome-icon class="icon" icon="fa-solid fa-lock" />
+            <input v-model="password" placeholder="8+ characters required" type="password">
+          </div>
+          <a class="password-forget">Forget your password click here!</a>
+          <button @click="sendLogin" type="button">
+            <font-awesome-icon class="icon" icon="fa-regular fa-circle-check" />
+            Login
+          </button>
+          <div class="create-account">
+            <div class="line-create-account"></div>
+            <p>or create new account</p>
+            <div class="line-create-account"></div>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -27,19 +44,19 @@ export interface User {
 }
 
 
-export default defineComponent ({
+export default defineComponent({
   name: "Login",
-  data(){
+  data() {
     return {
       email: '',
       password: ''
     }
   },
-  methods : {
+  methods: {
     sendLogin() {
       let user = <User>{
-        email : this.email,
-        password : this.password
+        email: this.email,
+        password: this.password
       }
 
       const params = new URLSearchParams();
@@ -65,9 +82,9 @@ export default defineComponent ({
   transform: translate(-50%, -50%);
   left: 50%;
   top: 50%;
-  width: 80%;
-  height: 80%;
-  background: #fff;
+  width: 100%;
+  height: 100%;
+  background: transparent;
   color: #535bf2;
   background-size: cover;
   border-radius: 10px;
@@ -76,28 +93,30 @@ export default defineComponent ({
 .left {
   position: absolute;
   transform: translate(0, -50%);
-  left: 2%;
+  left: 0;
   top: 50%;
-  width: 34%;
-  height: 95%;
+  width: 60%;
+  height: 100%;
   color: white;
-  background: #646cff;
-  text-align: center;
+  background: transparent;
+  text-align: left;
   border-radius: 10px;
 }
 
 .right {
   position: absolute;
-  left: 35%;
+  right: 0;
   top: 0;
-  text-align: center;
-  width: 66%;
+  width: 40%;
   height: 100%;
+  background: #ffffff;
 }
 
 .login_h2 {
+  position: absolute;
   margin-top: 10%;
-  font-size: 45px;
+  font-size: 40px;
+  top: 10%;
 }
 
 .divider {
@@ -106,7 +125,7 @@ export default defineComponent ({
   top: 30%;
   left: 50%;
   text-align: center;
-  width: 80%;
+  width: 100%;
   height: 1px;
   background: #888888;
 }
@@ -116,28 +135,88 @@ form {
   position: absolute;
   left: 50%;
   top: 68%;
-  width: 50%;
+  width: 100%;
   height: 50%;
-  margin: 10px;
+}
+
+.form-content {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  width: 70%;
+  height: 100%;
+}
+
+.email-input, .password-input {
+  display: block;
+  background: transparent;
+  margin-bottom: 40px;
+  border-radius: 8px;
+  color: #ABAFB9;
+  width: 100%;
+  height: 10%;
+  border: 1px solid #777;
+}
+
+label {
+  font-weight: bold;
+  color: #ABAFB9;
 }
 
 input {
-  display: block;
-  border: solid 1px #333333;
+  position: relative;
+  transform: translate(0, -50%);
+  left: 6%;
+  top: 45%;
   background: transparent;
-  margin-bottom: 50px;
-  border-radius: 2px;
-  color: #111111;
-  width: 100%;
-  height: 6.5%;
+  border: none;
+  color: #ABAFB9;
+  margin: 0;
+}
+
+input:focus {
+  outline: none;
+}
+
+
+.icon {
+  position: relative;
+  transform: translate(-50%, -50%);
+  left: 5%;
+  top: 45%;
+  color: #ABAFB9;
+  box-sizing: border-box;
+}
+
+.password-forget {
+  position: relative;
+  left: 0;
 }
 
 button {
   background: #535bf2;
   border: none;
-  border-radius: 2px;
+  border-radius: 8px;
   width: 100%;
-  height: 6.5%;
+  height: 10%;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.create-account {
+  position: relative;
+  color: #ABAFB9;
+  display: inline;
+}
+
+.line-create-account {
+  height: 1px;
+  width: 10%;
+  background: #ABAFB9;
+  display: inline;
 }
 
 </style>

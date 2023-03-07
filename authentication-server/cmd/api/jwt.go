@@ -12,14 +12,16 @@ import (
 var secret = []byte("asdfadsfdasfadsfd")
 
 type JwtClaims struct {
-	Username string `json:"username"`
+	Username   string `json:"username"`
+	Permission int    `json:"permission"`
 	jwt.RegisteredClaims
 }
 
 func GenerateJwt(user data.User) string {
 	expiration := time.Now().Add(5 * time.Minute)
 	claims := &JwtClaims{
-		Username: user.Username,
+		Username:   user.Username,
+		Permission: user.Permission,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiration),
 		},
@@ -33,16 +35,17 @@ func GenerateJwt(user data.User) string {
 	return jwtToken
 }
 
-func VerifyJwt(JwtToken string) bool {
+func VerifyJwt(JwtToken string) (bool, data.User) {
 	// TODO : add more security and verification
 	log.Println(JwtToken)
 	token, err := jwt.ParseWithClaims(JwtToken, &JwtClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
 	if err != nil {
-		return false
+		return false, data.User{}
 	}
-	return token.Valid
+	claims := token.Claims.(*JwtClaims)
+	return token.Valid, data.User{Username: claims.Username, Permission: claims.Permission}
 }
 
 func getTokenFromBearer(bearerToken string) string {
