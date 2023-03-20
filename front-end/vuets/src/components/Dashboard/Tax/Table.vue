@@ -1,4 +1,6 @@
 <script lang="ts">
+import TaxVerification from "./TaxForm.vue";
+
 export interface Tax {
   Username: String,
   IsPstValid: boolean
@@ -10,9 +12,52 @@ export interface Tax {
 }
 
 import {defineComponent} from "vue";
+import {TaxRequest} from "../../../Model";
+import axios from "axios";
 
 export default defineComponent({
-  props: ['tax']
+  components: {TaxVerification},
+  props: ['tax', 'newTax'],
+  data() {
+    return {
+      hasNewTax: false,
+    }
+  },
+  methods : {
+    sendTax() {
+      let tax = <TaxRequest>{
+        PstNumber : this.newTax.PstNumber,
+        QstNumber : this.newTax.QstNumber
+      }
+      axios.post('http://localhost:8081/service/taxation/verify',
+          {
+            Pst : tax.PstNumber,
+            Qst : tax.QstNumber
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: localStorage.getItem("token")
+            }
+          }
+      )
+          .then((response) => {
+            console.log(response.data)
+            console.log(response.request)
+          })
+          .catch(error => console.log(error))
+    },
+    handleNewTax() {
+      console.log(this.newTax.QstNumber)
+      if (this.newTax.QstNumber !== undefined) {
+        this.hasNewTax = true;
+        this.sendTax()
+      }
+    }
+  },
+  updated() {
+    this.handleNewTax()
+  }
 })
 </script>
 
@@ -21,6 +66,23 @@ export default defineComponent({
     <div class="table-item left">Pst number</div>
     <div class="table-item center">Qst number</div>
     <div class="table-item right">Entreprise</div>
+  </div>
+
+  <div v-if="this.hasNewTax" class="table-tax-for">
+    <div class="table-tax">
+      <div class="table-item left">{{ this.newTax.PstNumber }}
+        <div class="table-item left-icon" v-if="this.newTax.IsPstValid">
+          <font-awesome-icon class="table-true-icon" icon="fa-solid fa-check" />
+        </div>
+      </div>
+      <div class="table-item center">{{ this.newTax.QstNumber }}
+        <div class="table-item left-icon" v-if="this.newTax.IsQstValid">
+          <font-awesome-icon class="table-true-icon" icon="fa-solid fa-check" />
+        </div>
+      </div>
+      <div class="table-item right">{{ this.newTax.Enterprise }}</div>
+    </div>
+    <div class="table-line"></div>
   </div>
 
   <div class="table-tax-for" v-for="item in tax">

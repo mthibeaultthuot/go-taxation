@@ -1,5 +1,4 @@
 <template>
-  <div class="opacity-form"></div>
   <div class="form-body">
     <h2>Qst/Pst verification</h2>
       <form>
@@ -9,7 +8,7 @@
         <input v-model="Qst" type="text">
         <label>Entreprise name</label>
         <input v-model="entreprise" type="text">
-        <button @click="sendLogin" type="button">Check validity</button>
+        <button @click="emitTaxForm" type="button">Check validity</button>
       </form>
   </div>
 </template>
@@ -17,47 +16,29 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import axios from "axios";
-
-export interface Tax {
-  Pst: String,
-  Qst: String,
-}
+import {Tax, TaxRequest} from "../../../Model";
 
 
 export default defineComponent ({
   name: "TaxVerification",
+  props: ['newTax'],
   data(){
     return {
+      Tax : <Tax>{},
       Pst: '',
       Qst: '',
       entreprise  : ''
     }
   },
   methods : {
-    sendLogin() {
-      let tax = <Tax>{
-        Pst : this.Pst,
-        Qst : this.Qst
+    emitTaxForm() {
+      let tax = <TaxRequest>{
+        PstNumber: this.Pst,
+        QstNumber: this.Qst
       }
-
-      let json = JSON.stringify(tax)
-
-      const bearer = {
-        headers: { Authorization: localStorage.getItem("token") }
-      };
-      axios.post('http://localhost:8081/service/taxation/verify', json, bearer)
-          .then((response) => {
-            console.log(response.data)
-
-          })
-          .catch(error => console.log(error))
-    },
-    opacity() {
-      const el = document.body;
-      el.classList.add("opacity-form")
+      this.$emit('taxFormEmit', tax)
     }
   },
-
 })
 </script>
 

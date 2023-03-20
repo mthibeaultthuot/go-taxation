@@ -12,7 +12,7 @@ type Config struct {
 }
 
 var (
-	ip = "localhost:9000"
+	ip = "0.0.0.0:9001"
 )
 
 func main() {
@@ -23,9 +23,11 @@ func main() {
 		Handler: app.route(),
 	}
 
+	log.Println("rest api server start on : ", ip)
+
 	mongodb := data.MongoDb{
 		"MongoDb Tax",
-		"mongodb://localhost:27017",
+		"mongodb://root:9144tbbw@mongodb:27017",
 		"Tax",
 		"user",
 	}

@@ -32,10 +32,11 @@ func (app *Config) Tax(r http.ResponseWriter, w *http.Request) {
 		QstNumber: body.Qst,
 	}
 
+	log.Println(*tax)
+
 	qstVerification(tax)
 	pstVerification(tax)
 
-	log.Println("userna,e", user)
 	err = app.Repo.Insert(tax)
 	if err != nil {
 		return
@@ -50,7 +51,6 @@ func (app *Config) Tax(r http.ResponseWriter, w *http.Request) {
 	//r.Header().Set("Content-Type", w.Header.Get("Content-Type"))
 	//r.Header().Set("Content-Length", w.Header.Get("Content-Length"))
 
-	log.Println(tax)
 	//io.Copy(r, file)
 	//r.Write(&tax)
 	r.Header().Set("Content-Type", "application/json")

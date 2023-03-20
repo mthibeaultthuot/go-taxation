@@ -14,29 +14,20 @@
     </div>
 
     <div class="body">
-      <Table :tax="tax"/>
-      <TaxVerification v-if="showModal"></TaxVerification>
+      <Table :newTax="newTax" :tax="tax"/>
+      <TaxVerification @tax-form-emit="HandleNewTax" :new-tax="tax" v-if="showModal"></TaxVerification>
     </div>
-    </div>
+  </div>
 
 </template>
 
 <script lang="ts">
 import axios from "axios";
-
-export interface Tax {
-  Username:   String,
-  IsPstValid: boolean
-  IsQstValid: boolean
-  PstNumber:  String
-  QstNumber:  String
-  Enterprise: String
-  Date:       String
-}
-
 import {defineComponent} from "vue";
+import {Tax, TaxRequest} from "../../../Model";
 import Table from "./Table.vue";
 import TaxVerification from "./TaxForm.vue";
+
 
 
 export default defineComponent({
@@ -45,20 +36,29 @@ export default defineComponent({
   data() {
     return {
       tax: [],
-      showModal : false,
+      newTax : <TaxRequest>{},
+      showModal: false,
     }
   },
   methods: {
     fetchTax() {
       const bearer = {
-        headers: { Authorization: localStorage.getItem("token") }
+        headers: {
+          'content-type': ' application/json',
+          Authorization: localStorage.getItem("token")
+        }
       };
       axios.get('http://localhost:8081/service/taxation/test', bearer)
           .then((response) => {
             this.tax = response.data
           })
           .catch(error => console.log(error))
+    },
+    HandleNewTax(newTax : TaxRequest) {
+      this.newTax = newTax;
+      this.showModal = false;
     }
+
   },
   beforeMount() {
     this.fetchTax()

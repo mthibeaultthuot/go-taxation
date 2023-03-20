@@ -14,10 +14,6 @@ var (
 	qstResponse = "https://www.businessregistration-inscriptionentreprise.gc.ca/ebci/brom/registry/pub/reg_02_Ld.action"
 )
 
-var (
-	qc = "1221119611TQ0002"
-)
-
 func qstVerification(tax *data.Tax) jsonResponse {
 	res, err := http.Get("https://svcnab2b.revenuquebec.ca/2019/02/ValidationTVQ/" + tax.QstNumber)
 	if err != nil {
@@ -33,7 +29,6 @@ func qstVerification(tax *data.Tax) jsonResponse {
 	}
 
 	tax.Enterprise = data.Resultat.NomEntreprise
-	tax.QstNumber = qc
 	tax.IsPstValid = data.OperationReussie
 
 	return data

@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  mongodb :
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 9144tbbw
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017:27017"
+  authentication-service:
+    build:
+      context: authentication-server
+      dockerfile: authentication-service.dockerfile
+    restart: always
+    ports:
+      - "9001:9001"
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on:
+      - mongodb
+  verification-service:
+    build:
+      context: verificationTax-service
+      dockerfile: verification-service.dockerfile
+    restart: always
+    ports:
+      - "8081:8081"
+    deploy:
+      mode: replicated
+      replicas: 1
+
